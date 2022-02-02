@@ -8,19 +8,37 @@
 
 import pyautogui as pag
 from time import sleep
+import ctypes
 
 nbMessage = 1
 message = ""
 target = ""
 
+def tradMsg(msg):
+    fMsg = []
+    for char in list(msg):
+        if char.isupper():
+            fMsg.append(1)
+            fMsg.append(int(hex(ord(char.lower())),0) - 32)
+            fMsg.append(0)
+        else:
+            fMsg.append(int(hex(ord(char)),0) - 32)
+    return fMsg
 
 # Permet d'envoyer le message à la cible
-def sendMessage():
+def sendMessage(msg):
+    print(msg)
     for i in range(nbMessage):
-        sleep(0.5)
-        pag.write(message)
-        sleep(0.2)
-        pag.press("enter")
+        for f in msg:
+            if f == 1:
+                ctypes.windll.user32.keybd_event(20, 0, 0, 0)
+                ctypes.windll.user32.keybd_event(20, 0, 2, 0)
+            if f == 0:
+                ctypes.windll.user32.keybd_event(20, 0, 0, 0)
+                ctypes.windll.user32.keybd_event(20, 0, 2, 0)
+            else:
+                ctypes.windll.user32.keybd_event(f, 0, 0, 0)
+        ctypes.windll.user32.keybd_event(0x0D, 0, 0, 0)
 
 
 # Permet de trouver la cible
@@ -35,7 +53,8 @@ def goToTarget(targ):
         pag.click("assets/images/targetNotFound.png")
         print("La cible n'a pas été trouvé!")
     except TypeError:
-        sendMessage()
+        msg = tradMsg(message)
+        sendMessage(msg)
 
 
 # Permet d'ouvrir discord
