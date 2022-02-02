@@ -14,6 +14,7 @@ nbMessage = 1
 message = ""
 target = ""
 
+#Traduit le message en code decimal
 def tradMsg(msg):
     fMsg = []
     for char in list(msg):
